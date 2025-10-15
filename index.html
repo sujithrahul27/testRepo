@@ -1,26 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>On My Own</title>
-    <script src="https://live.zwidgets.com/js-sdk/1.2/ZohoEmbededAppSDK.min.js"></script>
-
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Internal hosting</title>
+	  <script src="../js/lib/ZohoEmbededAppSDK.min.js"></script>
+	
 </head>
 <body>
-    <h1>Now its my turn !</h1>
-    <h2 id="err">Error</h2>
-
+	<h1>Example of internal hosting</h1>
+	<h2 id="result">Result : </h2>
+	<h2 id="err">Error : </h2>
 </body>
 <script>
-    try{
-         ZOHO.embeddedApp.init();
-    console.log("handshake done");
-    }
-    catch(e){
-        document.getElementById("err").innerText += e;
-    }
-    
-   
+	console.log("before try block inital load");
+	try{
+		ZOHO.embeddedApp.on("PageLoad",function(data){
+			document.getElementById("result").innerText += "Loaded Succcesfully";
+			console.log("page load works correct");
+			console.log(data);
+			ZOHO.CRM.API.getRecord({Entity:data.Entity,RecordId:data.EntityId})
+			.then(function(response){
+				console.log(response);
+				document.getElementById("result").innerText += response; 
+			}).catch(function(error){
+				document.getElementById("err").innerText += error
+			});
+			
+		})
+		console.log("try block executed sucesfull");
+	}
+	catch(e){
+		document.getElementById("err").innerText += e;
+		console.log("error has been ooccured");
+	}
+	console.log("no errors till init");
+	ZOHO.embeddedApp.init();
+	console.log("programm executed sucessfully");
+
 </script>
 </html>
