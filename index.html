@@ -3,9 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>On My Own</title>
+    <script src="https://live.zwidgets.com/js-sdk/1.2/ZohoEmbededAppSDK.min.js"></script>
+
 </head>
 <body>
     <h1>Now its my turn !</h1>
+    <h2 id="err">Error</h2>
+
 </body>
+<script>
+    try{
+         ZOHO.embeddedApp.init();
+    console.log("handshake done");
+    }
+    catch(e){
+        document.getElementById("err").innerText += e;
+    }
+    
+   
+</script>
 </html>
