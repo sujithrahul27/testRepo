@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Retrieve Lead Info</title>
+    <script src="https://live.zwidgets.com/js-sdk/1.2/ZohoEmbededAppSDK.min.js"></script>
+
+    <style>
+        body { font-family: 'Lato', sans-serif; margin: 20px; }
+        #info { border: 1px solid #ddd; padding: 15px; border-radius: 5px; background-color: #f9f9f9; }
+        #info p { margin: 5px 0; }
+        #status { color: #888; font-style: italic; }
+        #json-output { 
+            background-color: #2d2d2d; 
+            color: #ccc; 
+            padding: 10px; 
+            border-radius: 4px;
+            white-space: pre-wrap; /* Allows text to wrap */
+            word-wrap: break-word; /* Breaks long words */
+            font-family: monospace;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Lead Information</h2>
+    <p id="status">Initializing...</p>
+<h3>helllo</h3>
+    <div id="info" style="display:none;">
+        <p><strong>First Name:</strong> <span id="firstName"></span></p>
+        <p><strong>Last Name:</strong> <span id="lastName"></span></p>
+        <p><strong>Email:</strong> <span id="email"></span></p>
+        <p><strong>Company:</strong> <span id="company"></span></p>
+    </div>
+
+    <h4>Full Record Data (JSON):</h4>
+    <pre id="json-output">Waiting for data...</pre>
+
+    <script>
+        // 2. LISTEN FOR THE WIDGET TO LOAD
+        ZOHO.embeddedApp.on("PageLoad", function(data) {
+            
+            document.getElementById('status').innerText = "Widget loaded. Fetching record data...";
+
+            // The 'data' object contains the Module (Entity) and the record's ID (EntityId)
+            const recordId = data.EntityId;
+            const moduleName = data.Entity;
+
+            // 3. USE THE SDK TO GET THE RECORD'S DETAILS
+            ZOHO.CRM.API.getRecord({
+                Entity: moduleName,
+                RecordID: recordId
+            })
+            .then(function(response) {
+                // The actual data is in the first element of the 'data' array
+                const recordData = response.data[0];
+
+                document.getElementById('status').innerText = "Data received successfully!";
+                
+                // 4. POPULATE YOUR HTML WITH THE RETRIEVED DATA
+                document.getElementById('firstName').innerText = recordData.First_Name || 'N/A';
+                document.getElementById('lastName').innerText = recordData.Last_Name || 'N/A';
+                document.getElementById('email').innerText = recordData.Email || 'N/A';
+                document.getElementById('company').innerText = recordData.Company || 'N/A';
+
+                // Display the raw JSON data so you can see all available fields
+                document.getElementById('json-output').innerText = JSON.stringify(recordData, null, 2);
+
+                document.getElementById('info').style.display = 'block';
+            })
+            .catch(function(error) {
+                document.getElementById('status').innerText = "Error fetching data.";
+                document.getElementById('json-output').innerText = JSON.stringify(error, null, 2);
+            });
+        });
+
+        // 5. INITIALIZE THE CONNECTION TO ZOHO CRM
+        ZOHO.embeddedApp.init();
+    </script>
+</body>
+</html>
